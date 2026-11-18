@@ -33,7 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.borgesnath1.db.fb.FBDatabase
+import com.borgesnath1.db.fb.toFBUsuario
+import com.borgesnath1.model.Usuario
 import com.borgesnath1.ui.theme.GoldPrimary
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.borgesnath1.ui.theme.RendezvousTheme
 import com.borgesnath1.ui.theme.TextGray
 
@@ -142,10 +147,18 @@ fun RegisterPage(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                Toast.makeText(activity, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
-                activity.finish()
+                // Ao criar a conta o Firebase já faz o login; o RendezvousApp abre a MainActivity
+                Firebase.auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(activity) { task ->
+                        if (task.isSuccessful) {
+                            FBDatabase().register(Usuario(id = "", nome = nome, email = email, contatos = emptyList()).toFBUsuario())
+                            Toast.makeText(activity, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(activity, "Cadastro FALHOU! Verifique o e-mail.", Toast.LENGTH_LONG).show()
+                        }
+                    }
             },
-            enabled = nome.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && password == repeatpassword && aceitouTermos,
+            enabled = nome.isNotEmpty() && email.isNotEmpty() && password.length >= 8 && password == repeatpassword && aceitouTermos,
             modifier = Modifier.fillMaxWidth(0.9f)
         ) {
             Text("Criar Conta")

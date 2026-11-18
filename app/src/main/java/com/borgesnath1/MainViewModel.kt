@@ -3,6 +3,8 @@ package com.borgesnath1
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.borgesnath1.db.fb.FBDatabase
 import com.borgesnath1.enums.Status
 import com.borgesnath1.model.Convidado
 import com.borgesnath1.model.Evento
@@ -10,18 +12,17 @@ import com.borgesnath1.model.Usuario
 import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 
-class MainViewModel() : ViewModel() {
-    private val _user = mutableStateOf<Usuario?>(
-        Usuario(
-            id = "1",
-            nome = "Ana Souza",
-            sobre = "Amante de cafés especiais e bons encontros!",
-            contatos = emptyList()
-        )
-    )
+class MainViewModel(private val db: FBDatabase) : ViewModel(), FBDatabase.Listener {
+    // Usuário logado, carregado do Firestore (users/{uid})
+    private val _user = mutableStateOf<Usuario?>(null)
 
+    // Encontros ainda simulados em memória (vão para o Firestore no próximo PR)
     private val _eventos = mutableStateListOf<Evento>().apply {
-        addAll(getEventos(_user.value!!))
+        addAll(getEventos(Usuario(id = "1", nome = "Ana Souza", contatos = emptyList())))
+    }
+
+    init {
+        db.setListener(this)
     }
 
     private val _eventoSelecionado = mutableStateOf<Evento?>(_eventos.firstOrNull())
@@ -33,6 +34,18 @@ class MainViewModel() : ViewModel() {
         get() = _user.value
 
     val eventos get() = _eventos.toList()
+
+    override fun onUserLoaded(user: Usuario) {
+        _user.value = user
+    }
+
+    override fun onUserSignOut() {
+        _user.value = null
+    }
+
+    fun atualizarPerfil(nome: String, sobre: String) {
+        db.atualizarPerfil(nome, sobre)
+    }
 
     fun remove (evento: Evento){
         _eventos.remove(evento)
@@ -86,6 +99,16 @@ class MainViewModel() : ViewModel() {
             _eventos[index] = atualizado
             _eventoSelecionado.value = atualizado
         }
+    }
+}
+
+class MainViewModelFactory(private val db : FBDatabase) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return MainViewModel(db) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
