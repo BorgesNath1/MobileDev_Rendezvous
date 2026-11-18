@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import com.borgesnath1.MainViewModel
 import com.borgesnath1.enums.Status
 import com.borgesnath1.model.Convidado
-import com.borgesnath1.model.Usuario
 import com.borgesnath1.ui.theme.GoldPrimary
 import com.borgesnath1.ui.theme.TextGray
 import com.borgesnath1.ui.theme.TextWhite
@@ -107,13 +106,13 @@ fun CriaEvento(
 
         Button(
             onClick = {
-                val criador = viewModel.user ?: Usuario("1", "Ana Souza", contatos = emptyList())
+                // Sem usuário carregado ainda (Firestore), não dá para marcar o dono
+                val criador = viewModel.user ?: return@Button
                 val descFinal = buildString {
                     if (localCafe.isNotBlank()) append(" • $localCafe")
                     if (descricao.isNotBlank()) append(" — $descricao")
                 }
                 viewModel.add(
-                    id = (viewModel.eventos.maxOfOrNull { it.id } ?: 0) + 1,
                     nome = nomeEncontro,
                     data = LocalDateTime.now().plusDays(2),
                     descricao = descFinal,
