@@ -113,7 +113,7 @@ fun LoginPage( modifier: Modifier = Modifier) {
                             if (task.isSuccessful) {
                                 Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
                             } else {
-                                Toast.makeText(activity, "Login FALHOU! Confira e-mail e senha.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(activity, "Login FALHOU! " + (task.exception?.localizedMessage ?: ""), Toast.LENGTH_LONG).show()
                             }
                         }
                 },

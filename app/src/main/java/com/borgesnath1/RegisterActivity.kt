@@ -154,7 +154,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
                             FBDatabase().register(Usuario(id = "", nome = nome, email = email, contatos = emptyList()).toFBUsuario())
                             Toast.makeText(activity, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
                         } else {
-                            Toast.makeText(activity, "Cadastro FALHOU! Verifique o e-mail.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(activity, "Cadastro FALHOU! " + (task.exception?.localizedMessage ?: ""), Toast.LENGTH_LONG).show()
                         }
                     }
             },
