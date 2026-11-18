@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    kotlin("plugin.serialization") version "2.2.10" apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 buildscript {
@@ -14,5 +14,7 @@ buildscript {
         classpath(
             "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
         )
+        // Firebase: lê o app/google-services.json
+        classpath("com.google.gms:google-services:4.6.0")
     }
 }
