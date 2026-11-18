@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.borgesnath1.ui.theme.RendezvousTheme
@@ -94,6 +96,7 @@ fun LoginPage( modifier: Modifier = Modifier) {
         ) {
             OutlinedTextField(
                 value = email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 label = { Text(text = "Digite seu e-mail") },
                 modifier = Modifier.fillMaxWidth(0.9f),
                 onValueChange = { email = it }
@@ -108,7 +111,7 @@ fun LoginPage( modifier: Modifier = Modifier) {
             Button(
                 onClick = {
                     // A navegação para a MainActivity é feita pelo RendezvousApp
-                    Firebase.auth.signInWithEmailAndPassword(email, password)
+                    Firebase.auth.signInWithEmailAndPassword(email.trim(), password)
                         .addOnCompleteListener(activity) { task ->
                             if (task.isSuccessful) {
                                 Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
