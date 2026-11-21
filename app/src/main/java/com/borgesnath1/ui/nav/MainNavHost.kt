@@ -38,7 +38,14 @@ fun MainNavHost (navController: NavHostController,
             CriaEvento(
                 modifier = modifier,
                 viewModel = viewModel,
-                onEventoCriado = { navController.navigate(Route.List) }
+                onEventoCriado = {
+                    // Tira a tela de criação da pilha; senão a barra de baixo restaura
+                    // "CriaEvento -> List" e o botão Criar Evento cai de novo na lista
+                    navController.navigate(Route.List) {
+                        popUpTo(Route.Home)
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable<Route.Perfil> {
