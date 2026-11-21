@@ -37,6 +37,8 @@ import com.borgesnath1.R
 import com.borgesnath1.ui.theme.GoldPrimary
 import com.borgesnath1.ui.theme.StatusRefusedRed
 import com.borgesnath1.ui.theme.TextGray
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 fun ProfilePage(modifier : Modifier = Modifier.Companion,
@@ -45,8 +47,9 @@ fun ProfilePage(modifier : Modifier = Modifier.Companion,
     val usuario = viewModel.user
     val activity = LocalActivity.current as Activity
 
-    var nome by rememberSaveable { mutableStateOf(usuario?.nome ?: "Ana Souza") }
-    var sobre by rememberSaveable { mutableStateOf(usuario?.sobre ?: "Amante de cafés especiais!") }
+    // A chave (usuario) recarrega os campos quando o perfil chega do Firestore
+    var nome by rememberSaveable(usuario) { mutableStateOf(usuario?.nome ?: "") }
+    var sobre by rememberSaveable(usuario) { mutableStateOf(usuario?.sobre ?: "") }
 
     Column(
         modifier = modifier.fillMaxSize().padding(24.dp),
@@ -111,8 +114,7 @@ fun ProfilePage(modifier : Modifier = Modifier.Companion,
             ) {
                 Button(
                     onClick = {
-                        usuario?.nome = nome
-                        usuario?.sobre = sobre
+                        viewModel.atualizarPerfil(nome, sobre)
                         Toast.makeText(activity, "Perfil atualizado!", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.weight(1f)
@@ -123,7 +125,8 @@ fun ProfilePage(modifier : Modifier = Modifier.Companion,
                 OutlinedButton(
                     onClick = {
                         Toast.makeText(activity, "Saindo da conta...", Toast.LENGTH_SHORT).show()
-                        activity.finish()
+                        // O RendezvousApp volta para a LoginActivity
+                        Firebase.auth.signOut()
                     },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = StatusRefusedRed)

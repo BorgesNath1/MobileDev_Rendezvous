@@ -86,7 +86,7 @@ fun HomePage(
                     color = TextGray
                 )
                 Text(
-                    text = viewModel.user?.nome ?: "Ana Souza",
+                    text = viewModel.user?.nome ?: "",
                     fontSize = 24.sp,
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,

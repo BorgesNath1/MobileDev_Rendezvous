@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.borgesnath1.db.fb.FBDatabase
 import com.borgesnath1.ui.nav.BottomNavBar
 import com.borgesnath1.ui.nav.BottomNavItem
 import com.borgesnath1.ui.nav.MainNavHost
@@ -26,7 +28,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val currentRout = navController.currentBackStackEntryAsState()
-            val viewModel: MainViewModel = viewModel()
+            val fbDB = remember { FBDatabase() }
+            val viewModel: MainViewModel = viewModel(
+                factory = MainViewModelFactory(fbDB)
+            )
 
             RendezvousTheme {
                 Scaffold(

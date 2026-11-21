@@ -32,9 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.borgesnath1.ui.theme.RendezvousTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +96,7 @@ fun LoginPage( modifier: Modifier = Modifier) {
         ) {
             OutlinedTextField(
                 value = email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 label = { Text(text = "Digite seu e-mail") },
                 modifier = Modifier.fillMaxWidth(0.9f),
                 onValueChange = { email = it }
@@ -105,12 +110,15 @@ fun LoginPage( modifier: Modifier = Modifier) {
             )
             Button(
                 onClick = {
-                    activity.startActivity(
-                        Intent(activity, MainActivity::class.java).setFlags(
-                            FLAG_ACTIVITY_SINGLE_TOP
-                        )
-                    )
-                    Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
+                    // A navegação para a MainActivity é feita pelo RendezvousApp
+                    Firebase.auth.signInWithEmailAndPassword(email.trim(), password)
+                        .addOnCompleteListener(activity) { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(activity, "Login FALHOU! " + (task.exception?.localizedMessage ?: ""), Toast.LENGTH_LONG).show()
+                            }
+                        }
                 },
                 enabled = email.isNotEmpty() && password.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth(0.7f),

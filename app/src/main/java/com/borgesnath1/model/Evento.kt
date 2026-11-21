@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 
 data class Evento (
-    val id: Int,
+    val id: String,   // id do documento no Firestore (eventos/{id})
     val nome: String,
     val data: LocalDateTime,
     val descricao: String? = null,

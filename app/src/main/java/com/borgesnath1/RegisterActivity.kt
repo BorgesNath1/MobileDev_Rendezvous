@@ -31,9 +31,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.borgesnath1.db.fb.FBDatabase
+import com.borgesnath1.db.fb.toFBUsuario
+import com.borgesnath1.model.Usuario
 import com.borgesnath1.ui.theme.GoldPrimary
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.borgesnath1.ui.theme.RendezvousTheme
 import com.borgesnath1.ui.theme.TextGray
 
@@ -100,6 +107,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             )
             OutlinedTextField(
                 value = email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 label = { Text(text = "E-MAIL") },
                 placeholder = { Text(text = "seu@email.com", color = TextGray) },
                 modifier = Modifier.fillMaxWidth(0.9f),
@@ -142,10 +150,18 @@ fun RegisterPage(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                Toast.makeText(activity, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
-                activity.finish()
+                // Ao criar a conta o Firebase já faz o login; o RendezvousApp abre a MainActivity
+                Firebase.auth.createUserWithEmailAndPassword(email.trim(), password)
+                    .addOnCompleteListener(activity) { task ->
+                        if (task.isSuccessful) {
+                            FBDatabase().register(Usuario(id = "", nome = nome.trim(), email = email.trim(), contatos = emptyList()).toFBUsuario())
+                            Toast.makeText(activity, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(activity, "Cadastro FALHOU! " + (task.exception?.localizedMessage ?: ""), Toast.LENGTH_LONG).show()
+                        }
+                    }
             },
-            enabled = nome.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && password == repeatpassword && aceitouTermos,
+            enabled = nome.isNotEmpty() && email.isNotEmpty() && password.length >= 8 && password == repeatpassword && aceitouTermos,
             modifier = Modifier.fillMaxWidth(0.9f)
         ) {
             Text("Criar Conta")
