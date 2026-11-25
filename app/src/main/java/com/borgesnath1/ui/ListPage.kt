@@ -110,8 +110,11 @@ fun ListPage(
                 items = eventosFiltrados,
                 key = { evento -> evento.id }
             ) { evento ->
+                val isProprietario = viewModel.user?.id != null && evento.proprietario?.id == viewModel.user?.id // valida o user
+
                 EventoItem(
                     evento = evento,
+                    isProprietario = isProprietario,
                     onClose = {
                         viewModel.remove(evento)
                         Toast.makeText(

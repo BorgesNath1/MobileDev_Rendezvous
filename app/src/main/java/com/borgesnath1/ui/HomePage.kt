@@ -109,9 +109,18 @@ fun HomePage(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            ResumoCard(valor = "${eventosList.size}", legenda = "marcados", modifier = Modifier.weight(1f))
-            ResumoCard(valor = "$confirmadosCount", legenda = "confirmados", modifier = Modifier.weight(1f))
-            ResumoCard(valor = "3d", legenda = "dias restantes", modifier = Modifier.weight(1f))
+            ResumoCard(
+                valor = "${eventosList.size}",
+                legenda = "marcados",
+                modifier = Modifier.weight(1f))
+            ResumoCard(
+                valor = "$confirmadosCount",
+                legenda = "confirmados",
+                modifier = Modifier.weight(1f))
+            ResumoCard(
+                valor = "3d",
+                legenda = "dias restantes",
+                modifier = Modifier.weight(1f))
         }
 
         Row(
@@ -150,18 +159,37 @@ fun HomePage(
                     ) {
                         Box(
                             modifier = Modifier
-                                .background(GoldBadgeBg, RoundedCornerShape(50))
-                                .border(1.dp, GoldDarkBorder, RoundedCornerShape(50))
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                                .background(
+                                    GoldBadgeBg,
+                                    RoundedCornerShape(50))
+                                .border(
+                                    1.dp,
+                                    GoldDarkBorder,
+                                    RoundedCornerShape(50))
+                                .padding(
+                                    horizontal = 10.dp,
+                                    vertical = 4.dp)
                         ) {
-                            Text("Encontro", fontSize = 10.sp, color = GoldPrimary, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Encontro",
+                                fontSize = 10.sp,
+                                color = GoldPrimary,
+                                fontWeight = FontWeight.Bold)
                         }
                         Box(
                             modifier = Modifier
                                 .background(GoldPrimary, RoundedCornerShape(50))
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
-                            Text("ADMIN", fontSize = 10.sp, color = TextDarkOnGold, fontWeight = FontWeight.Bold)
+                            Text(
+                                if (viewModel.user?.id != null
+                                    && proximoEvento.proprietario?.id
+                                    == viewModel.user?.id) "ADMIN"
+                                else "CONVIDADO",
+                                fontSize = 10.sp,
+                                color = TextDarkOnGold,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
 
@@ -191,6 +219,9 @@ fun HomePage(
             eventosList.drop(1).forEach { evento ->
                 EventoItem(
                     evento = evento,
+                    isProprietario = viewModel.user?.id != null
+                            && evento.proprietario?.id
+                            == viewModel.user?.id,
                     onClick = {
                         viewModel.eventoSelecionado = evento
                         onNavigateToDetails()
@@ -222,14 +253,19 @@ fun HomePage(
 fun ResumoCard(valor: String, legenda: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(AppDimens.CardCornerRadius),
-        colors = CardDefaults.cardColors(containerColor = DarkSurface),
-        border = BorderStroke(1.dp, BorderSubtle)
+        shape = RoundedCornerShape(
+            AppDimens.CardCornerRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = DarkSurface),
+        border = BorderStroke(
+            1.dp,
+            BorderSubtle)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 14.dp, horizontal = 8.dp),
+                .padding(vertical = 14.dp,
+                    horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -254,19 +290,23 @@ fun AcaoRapidaButton(texto: String, onClick: () -> Unit, modifier: Modifier = Mo
         onClick = onClick,
         modifier = modifier.height(54.dp),
         shape = RoundedCornerShape(14.dp),
-        border = BorderStroke(1.dp, BorderSubtle),
+        border = BorderStroke(1.dp,
+            BorderSubtle),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = DarkSurface,
             contentColor = TextWhite
         )
     ) {
-        Text(text = texto, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+        Text(text = texto,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium)
     }
 }
 
 @Composable
 fun EventoItem(
     evento: Evento,
+    isProprietario: Boolean,
     onClick: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
@@ -280,7 +320,9 @@ fun EventoItem(
             .clickable { onClick() },
         shape = RoundedCornerShape(AppDimens.CardCornerRadius),
         colors = CardDefaults.cardColors(containerColor = DarkSurface),
-        border = BorderStroke(1.dp, GoldDarkBorder)
+        border = BorderStroke(
+            1.dp,
+            GoldDarkBorder)
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
@@ -315,8 +357,13 @@ fun EventoItem(
                         color = GoldPrimary
                     )
                 }
-                IconButton(onClick = onClose){
-                    Icon(Icons.Filled.Close, contentDescription = "Remover", tint = TextGray)
+                if (isProprietario) {
+                    IconButton(onClick = onClose){
+                        Icon(
+                            Icons.Filled.Close,
+                            contentDescription = "Remover",
+                            tint = TextGray)
+                    }
                 }
             }
 
@@ -339,7 +386,9 @@ fun EventoItem(
 
                 OutlinedButton(
                     onClick = onClick,
-                    border = BorderStroke(1.dp, GoldPrimary),
+                    border = BorderStroke(
+                        1.dp,
+                        GoldPrimary),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = GoldPrimary)
                 ) {
                     Text("Detalhes / Convite", fontSize = 12.sp)

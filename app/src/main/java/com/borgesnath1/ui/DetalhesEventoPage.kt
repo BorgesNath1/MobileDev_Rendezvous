@@ -78,8 +78,12 @@ fun DetalhesEventoPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Nenhum encontro selecionado.", color = TextWhite)
-            OutlinedButton(onClick = onBack, modifier = Modifier.padding(top = 12.dp)) {
+            Text(
+                "Nenhum encontro selecionado.",
+                color = TextWhite)
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier.padding(top = 12.dp)) {
                 Text("Voltar")
             }
         }
@@ -111,14 +115,6 @@ fun DetalhesEventoPage(
             .padding(AppDimens.ScreenPadding),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedButton(
-            onClick = onBack,
-            border = BorderStroke(1.dp, GoldDarkBorder),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = GoldPrimary)
-        ) {
-            Text("← Voltar")
-        }
-
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(AppDimens.CardCornerRadius),
@@ -131,10 +127,17 @@ fun DetalhesEventoPage(
             ) {
                 Box(
                     modifier = Modifier
-                        .background(GoldBadgeBg, RoundedCornerShape(50))
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .background(
+                            GoldBadgeBg,
+                            RoundedCornerShape(50))
+                        .padding(horizontal = 10.dp,
+                            vertical = 4.dp)
                 ) {
-                    Text("Encontro", fontSize = 10.sp, color = GoldPrimary, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Encontro",
+                        fontSize = 10.sp,
+                        color = GoldPrimary,
+                        fontWeight = FontWeight.Bold)
                 }
                 Text(
                     text = evento.nome,
@@ -168,7 +171,10 @@ fun DetalhesEventoPage(
                 corDestaque = StatusConfirmedGreen,
                 onClick = {
                     viewModel.atualizarStatus(evento, Status.CONFIRMADO)
-                    Toast.makeText(activity, "Presença confirmada!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Presença confirmada!",
+                        Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -178,7 +184,10 @@ fun DetalhesEventoPage(
                 corDestaque = GoldPrimary,
                 onClick = {
                     viewModel.atualizarStatus(evento, Status.AGUARDANDO)
-                    Toast.makeText(activity, "Status alterado para Pendente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Status alterado para Pendente",
+                        Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -188,7 +197,10 @@ fun DetalhesEventoPage(
                 corDestaque = StatusRefusedRed,
                 onClick = {
                     viewModel.atualizarStatus(evento, Status.RECUSADO)
-                    Toast.makeText(activity, "Convite recusado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Convite recusado",
+                        Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -204,13 +216,23 @@ fun DetalhesEventoPage(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text("Informações do Encontro", color = GoldPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(
+                    "Informações do Encontro",
+                    color = GoldPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp)
                 HorizontalDivider(color = BorderSubtle)
-                InfoRow(label = "📅  DATA", valor = dataFormatada)
+                InfoRow(
+                    label = "📅  DATA",
+                    valor = dataFormatada)
                 HorizontalDivider(color = BorderSubtle)
-                InfoRow(label = "⏰  HORÁRIO", valor = horaFormatada)
+                InfoRow(
+                    label = "⏰  HORÁRIO",
+                    valor = horaFormatada)
                 HorizontalDivider(color = BorderSubtle)
-                InfoRow(label = "📍  LOCAL", valor = evento.descricao ?: "Café Bom Dia, Pinheiros")
+                InfoRow(
+                    label = "📍  LOCAL",
+                    valor = evento.descricao ?: "Café Bom Dia, Pinheiros")
             }
         }
 
@@ -231,14 +253,24 @@ fun DetalhesEventoPage(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = camPosState,
                 onMapClick = { novaCoordenada ->
-                    viewModel.atualizarLocalizacao(evento, novaCoordenada)
-                    Toast.makeText(activity, "Local do encontro atualizado no mapa!", Toast.LENGTH_SHORT).show()
+                    if (viewModel.user?.id != null
+                        && evento.proprietario?.id
+                        == viewModel.user?.id)
+                    {
+                        viewModel.atualizarLocalizacao(evento, novaCoordenada)
+                        Toast.makeText(
+                            activity,
+                            "Local do encontro atualizado no mapa!",
+                            Toast.LENGTH_SHORT).show()
+                    }
                 },
                 properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
-                uiSettings = MapUiSettings(myLocationButtonEnabled = true, zoomControlsEnabled = true)
+                uiSettings = MapUiSettings(
+                    myLocationButtonEnabled = true,
+                    zoomControlsEnabled = true)
             ) {
                 Marker(
-                    state = MarkerState(position = coordenadaEvento),
+                    state = MarkerState (position = coordenadaEvento),
                     title = evento.nome,
                     snippet = evento.descricao ?: "Local do Café"
                 )
@@ -271,19 +303,26 @@ fun DetalhesEventoPage(
                 OutlinedTextField(
                     value = emailConvidado,
                     onValueChange = { emailConvidado = it },
-                    placeholder = { Text("convidado@email.com", color = TextGray) },
+                    placeholder = {
+                        Text("convidado@email.com",
+                            color = TextGray) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Button(
                     onClick = {
                         viewModel.adicionarConvidado(evento, emailConvidado)
-                        Toast.makeText(activity, "Convite enviado para $emailConvidado!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            activity,
+                            "Convite enviado para $emailConvidado!",
+                            Toast.LENGTH_SHORT).show()
                         emailConvidado = ""
                     },
                     enabled = emailConvidado.isNotBlank(),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Enviar Convite", fontWeight = FontWeight.Bold)
+                    Text(
+                        "Enviar Convite",
+                        fontWeight = FontWeight.Bold)
                 }
 
                 HorizontalDivider(color = BorderSubtle)
@@ -307,11 +346,19 @@ fun DetalhesEventoPage(
                     )
                     OutlinedButton(
                         onClick = {
-                            Toast.makeText(activity, "Link copiado!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                activity,
+                                "Link copiado!",
+                                Toast.LENGTH_SHORT).show()
                         },
-                        border = BorderStroke(1.dp, GoldPrimary)
+                        border = BorderStroke(
+                            1.dp,
+                            GoldPrimary)
                     ) {
-                        Text("Copiar", fontSize = 12.sp, color = GoldPrimary)
+                        Text(
+                            "Copiar",
+                            fontSize = 12.sp,
+                            color = GoldPrimary)
                     }
                 }
             }
@@ -329,7 +376,9 @@ fun DetalhesEventoPage(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(AppDimens.CardCornerRadius),
             colors = CardDefaults.cardColors(containerColor = DarkSurface),
-            border = BorderStroke(1.dp, BorderSubtle)
+            border = BorderStroke(
+                1.dp,
+                BorderSubtle)
         ) {
             Column(
                 modifier = Modifier.padding(14.dp),
@@ -349,7 +398,9 @@ fun DetalhesEventoPage(
                         )
                         Box(
                             modifier = Modifier
-                                .background(GoldBadgeBg, RoundedCornerShape(50))
+                                .background(
+                                    GoldBadgeBg,
+                                    RoundedCornerShape(50))
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
@@ -379,20 +430,33 @@ private fun PresencaButton(
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
-        border = BorderStroke(1.dp, if (selecionado) corDestaque else BorderSubtle),
+        border = BorderStroke(
+            1.dp,
+            if (selecionado) corDestaque else BorderSubtle),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = if (selecionado) GoldBadgeBg else DarkSurface,
             contentColor = if (selecionado) corDestaque else TextGray
         )
     ) {
-        Text(text = texto, fontSize = 11.sp, maxLines = 1, fontWeight = FontWeight.Bold)
+        Text(
+            text = texto,
+            fontSize = 11.sp,
+            maxLines = 1,
+            fontWeight = FontWeight.Bold)
     }
 }
 
 @Composable
 private fun InfoRow(label: String, valor: String) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(text = label, fontSize = 11.sp, color = TextGray)
-        Text(text = valor, fontSize = 15.sp, color = TextWhite, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            color = TextGray)
+        Text(
+            text = valor,
+            fontSize = 15.sp,
+            color = TextWhite,
+            fontWeight = FontWeight.SemiBold)
     }
 }
